@@ -7,7 +7,7 @@ LBF_MODEL_PATH = "lbfmodel.yaml"
 FACE_FRACT = 4
 
 # Folder containing input images and output dir
-INPUT_FOLDER = "SelfTest"
+INPUT_FOLDER = "Input"
 OUTPUT_FOLDER = "Output"
 # Valid file extensions for images (lowercase)
 IMAGE_FORMATS = ["jpg","png"]
