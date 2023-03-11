@@ -48,7 +48,10 @@ def detectFaces(image, detector=False):
     faces = np.array(list(filter(lambda f: faceMoreThanFraction(f, image.shape), faces)))
 
     # Print coordinates of detected faces
-    logging.info(f"Detected {len(faces)} Faces")
+    if num_faces := len(faces):
+        logging.info(f"Detected {num_faces} Faces")
+    else:
+        logging.warn("No faces detected in image!")
     for f in faces: logging.debug("\tx: {} y: {} width: {} height: {}".format(*f))
     return faces
 
@@ -57,6 +60,9 @@ def detectLandmarks(image, faces=False, detector=False):
     # Detect faces if they weren't passed in
     if faces is False: 
         faces = detectFaces(image)
+    # Ensure at least one face was deteced
+    if not len(faces):
+        raise ValueError("No faces Detected!")
     # Instanciate a detector if one wasn't passed in
     if not detector: detector = loadLBF()
     _, landmarks = detector.fit(image, faces)

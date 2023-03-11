@@ -9,6 +9,7 @@ PIL_logger.setLevel(logging.WARN)
 
 # Get a list of (date, image_path) pairs
 images = getImagesWithDates(INPUT_FOLDER)
+print(images)
 
 # Find canvas size
 img = loadImgGray(images[0][1])
@@ -20,11 +21,18 @@ lbf = loadLBF()
 
 face_landmarks = np.empty((len(images),68,2))
 
-for i, (date, path) in enumerate(images):
+i = 0
+
+for date, path in images:
     # Load image and detect landmarks
     img = loadImgGray(path)
     faces = detectFaces(img, detector=haar)
-    face_landmarks[i] = np.array(detectLandmarks(img, faces, detector=lbf))
+
+    try:
+        face_landmarks[i] = np.array(detectLandmarks(img, faces, detector=lbf))
+    except ValueError:
+        logging.warn(f"Skipping {path} because no faces were detected!")
+        continue
 
     # Select target points (result of adjusting last image)
     targetpts = face_landmarks[max(0, i-1)]
@@ -45,3 +53,4 @@ for i, (date, path) in enumerate(images):
     cv2.imwrite(os.path.join(OUTPUT_FOLDER, f"{i}.jpg"), result)
     
     logging.info(f"Completed frame {i+1}/{len(images)}")
+    i += 1
